@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AI Mastering</title>
+    <style>
+        /* Add some styles to the form elements */
+        label, input, select {
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Mastering</h1>
+    <form id="mastering-form">
+        <label for="input-file">Input File:</label>
+        <input type="file" id="input-file" name="input-file">
+        
+        <label for="output-name">Output Name:</label>
+        <input type="text" id="output-name" name="output-name">
+        
+        <label for="output-folder">Output Folder:</label>
+        <input type="file" id="output-folder" name="output-folder" webkitdirectory mozdirectory>
+        
+        <input type="submit" value="Submit">
+    </form>
+
+    <div id="status"></div>
+
+    <script>
+        // Add event listener to the form submit button
+        const form = document.getElementById('mastering-form');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            // Make an AJAX request to the server to start the mastering process
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/mastering', true);
+
+            // Set the response type to JSON
+            xhr.responseType = 'json';
+
+            // Set the progress event listener to show the status
+            xhr.upload.addEventListener('progress', (event) => {
+                const percent = (event.loaded / event.total) * 100;
+                const status = document.getElementById('status');
+                status.textContent = `Waiting for the mastering completion progression: ${percent.toFixed()}%`;
+            });
+
+            // Set the load event listener to show the result
+            xhr.addEventListener('load', (event) => {
+                const status = document.getElementById('status');
+                status.textContent = `The output file was written to ${event.target.response}`;
+            });
+
+            // Send the form data
+            xhr.send(formData);
+        });
+    </script>
+</body>
+</html>
